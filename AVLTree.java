@@ -24,25 +24,24 @@ public class AVLTree {
      * complexity=O(1)
      */
     public AVLTree(){
-    	this.root=null;
-        
+    	this.root=null;     
     }
 
+	
     /**
      * public boolean empty()
      * <p>
      * returns true if and only if the tree is empty, 
      * complexity=O(1)
      */ 
-    
     public boolean empty() { 
         if (this.root==null){
-        	return true;
-        	
+        	return true;	
         }
         return false;
     }
 
+	
     /**
      * public boolean search(int k)
      * <p>
@@ -54,8 +53,7 @@ public class AVLTree {
         AVLNode Node=root;
         while (Node!=null){
         	if (k==Node.getKey()) {
-        		return Node.getValue();
-        		
+        		return Node.getValue();	
         	}
         	if (k<Node.key) {
         		Node=Node.getLeft();
@@ -66,6 +64,7 @@ public class AVLTree {
         }
         return null;
     }
+	
 
     /**
      * public int insert(int k, boolean i)
@@ -81,7 +80,7 @@ public class AVLTree {
     	AVLNode Node=new AVLNode(k,i);  
     	Node.setLeft(Node.VirtualAVLNode());
     	Node.setRight(Node.VirtualAVLNode());
-    	Node.xor=Node.info;
+    	Node.xor = Node.info;
     	this.size+=1;
     	if(this.size()==1){
     		this.root=Node;
@@ -89,14 +88,13 @@ public class AVLTree {
     		this.min=Node;
     		return 1;
     	}
-    	
-    	
     	if(search(k)!=null) {
     		return -1;
     	}
-    	
     	AVLNode Node_to_compare=this.root;
-    	while(Node_to_compare.getValue()!=null) { // searching where to insert Node
+	
+	// searching where to insert the Node
+    	while(Node_to_compare.getValue()!=null) { 
     		if(Node.getKey()<Node_to_compare.getKey()) {
     			if(!Node_to_compare.left.isRealNode()) {
     				break;
@@ -107,26 +105,22 @@ public class AVLTree {
     			if(!Node_to_compare.right.isRealNode()) {
         			break;
     			}
-    			Node_to_compare=Node_to_compare.right;
-    			
-    			
+    			Node_to_compare=Node_to_compare.right;	
     		}
     	}
     	Node.setParent(Node_to_compare); //inserting Node as a leaf
     	if(Node.parent.key>Node.key) {
-    		Node.parent.setLeft(Node);
-    			
+    		Node.parent.setLeft(Node);	
     		}
     		else {
-    			Node.parent.setRight(Node);
-    			
-    			
+    			Node.parent.setRight(Node);	
     		}
         
-        
-        
-    	set_succ_and_pred_insert(Node); //updating successor and predecessor
-        int cnt1=update_heights_and_BF(Node); //updating heights and BF 
+	//updating successor and predecessor
+    	set_succ_and_pred_insert(Node); 
+	    
+	//updating heights and BF
+        int cnt1=update_heights_and_BF(Node);  
         
         AVLNode aid_node= Node;
         int cnt=1;
@@ -138,117 +132,94 @@ public class AVLTree {
         	rotations(aid_node);
         	update_heights_and_BF(aid_node);
         	update_xor_for_ancestors(Node);
-        
         	return cnt;
         }
         update_xor_for_ancestors(Node);
         return cnt1;
-        
-       
     }
+	
     
-  // complexity O(logn)
-  //updating all of Node's ancestor's xor in case Node's info is true
-        void update_xor_for_ancestors(AVLNode Node) {  
-        	
-        	AVLNode ancestor=Node.parent;
-        	while(ancestor!=null) {
-        		update_xor_for_Node(ancestor);
+    // complexity O(logn)
+    //updating all of Node's ancestor's xor in case Node's info is true
+    void update_xor_for_ancestors(AVLNode Node) {  
+          AVLNode ancestor=Node.parent;
+          while(ancestor!=null) {
+        	  update_xor_for_Node(ancestor);
+        	  ancestor=ancestor.parent;
+          }
+    }
         		
-        		ancestor=ancestor.parent;
-        	}
-        		
-        	}
-        		
-        		
-        	
-        	
-        	
-      // complexity : O(1)
-      //updating Node's xor;
-        
-        void update_xor_for_Node(AVLNode Node) { 	
-        	
+        		 	  	
+    // complexity : O(1)
+    //updating Node's xor;
+    void update_xor_for_Node(AVLNode Node) { 	 	
         int count=0;
         if(!Node.is_leaf()) {
-        
-       	
-       	if(Node.left.isRealNode() ) {
-       		if(Node.left.xor==true) {
-       		count++;
+       		if(Node.left.isRealNode() ) {
+       			if(Node.left.xor==true) {
+       				count++;
+       			}
+       			if(Node.left.info==true && (!Node.left.is_leaf())) {
+       				count++;
+       			}	
        		}
-       		if(Node.left.info==true && (!Node.left.is_leaf())) {
-       			count++;
-       		}
-       		
-       	}
-       	if(Node.right.isRealNode()) {
-       		if(Node.right.xor==true) {
-       		count++;
-       		}
-       		if(Node.right.info==true && (!Node.right.is_leaf())) {
-       			count++;
-       		}
-       		
-       	}
-        	
-        if(count%2==1) {
-        	Node.xor=true;
-        }
-        else {
-        	Node.xor=false;
-        }
+       		if(Node.right.isRealNode()) {
+       			if(Node.right.xor==true) {
+       				count++;
+       		        }
+       			if(Node.right.info==true && (!Node.right.is_leaf())) {
+       				count++;
+       			}	
+       	 	}
+        	if(count%2==1) {
+        		Node.xor=true;
+        	}
+        	else {
+        		Node.xor=false;
+        	}
         }
         else {
         	Node.xor=Node.info;
         }
-        }
+    }
         
         
         
-    
     // complexity O(logn)
     // set successor_and_predecessor for a new Node in the tree;
-    
    void set_succ_and_pred_insert(AVLNode Node){
-
-       if(this.min.key>Node.key) { //checking if Node is the new minimum
+	   
+	//checking if Node is the new minimum
+       if(this.min.key>Node.key) { 
        	Node.successor=min;
        	min.predecessor=Node;
-       	this.min=Node;
-       	
-       	
+       	this.min=Node;	
        }
        
-       else if(this.max.key<Node.key) { //checking if Node is the new maximum
+       //checking if Node is the new maximum
+       else if(this.max.key<Node.key) { 
        	Node.predecessor=max;
        	max.successor=Node;
-       	this.max=Node;
-       	
+       	this.max=Node;	
        }
-       else { // Node is not the new minimum or maximum
+	 
+	// Node is not the new minimum or maximum
+       else { 
     	 AVLNode ancestor=Node.getParent();
     	 while(ancestor.key<Node.key) {
-    		 ancestor=ancestor.getParent();
-    		 
+    		 ancestor=ancestor.getParent();	 
     	 }
     	 Node.successor=ancestor;
     	 Node.predecessor=ancestor.predecessor;
     	 Node.predecessor.successor=Node;
-    	 ancestor.predecessor=Node;
-    	 
-    	 
+    	 ancestor.predecessor=Node; 
        }
-       
-       
-    	   
-    	   
-    	   
-       }
+   }
    
+	
+	
    // complexity O(1)
    // receiving a node with BF 2,-2, checking what rotations are needed and performing them
-   
    void rotations(AVLNode Node){
 	   if(Node.BF==-2) {
 		   if(Node.right.BF==-1 || Node.right.BF==0) {
@@ -256,52 +227,46 @@ public class AVLTree {
 		   }
 		   else { //Node.right.BF==1
 			   right_rotation(Node.right);
-			   left_rotation(Node);
-			   
+			   left_rotation(Node);   
 		   }
 	   }
-		   else {  //Node.BF==2
-			   if(Node.left.BF==1 || Node.left.BF==0) {
-				   right_rotation(Node);
-			   
-		   }
-			   else { //Node.right.BF==-1
-				   left_rotation(Node.left);
-				   right_rotation(Node);
-			   }
-			   
+	   
+	   // Node.BF equal to 2
+	   else {  
+		if(Node.left.BF==1 || Node.left.BF==0) {
+			right_rotation(Node);
+		}
+		// Node.right.BF equal to -1
+		else {
+			left_rotation(Node.left);
+			right_rotation(Node);
+		}
 	   }
-	   }
+   }
    
   
    
 	   
-   
-   
-   
+
        
-// complexity O(logn)       
-// returns the number of Nodes that changed height during insertion
-// update all heights and Balance Factors of ancestors of Node during insertion of Node 
+   // complexity O(logn)       
+   // returns the number of Nodes that changed height during insertion
+   // update all heights and Balance Factors of ancestors of Node during insertion of Node 
    int update_heights_and_BF(AVLNode Node) {
 	   int cnt=1;
 	   AVLNode ancestor=Node.parent;
 	   int prev_height=ancestor.getHeight();
 	   if(ancestor.getKey()<Node.getKey()) {
-		   ancestor.setHeight(Math.max(ancestor.left.getHeight(), ancestor.getRight().getHeight()+1));
-		   
+		   ancestor.setHeight(Math.max(ancestor.left.getHeight(), ancestor.getRight().getHeight()+1));   
 	   }
 	   else{
-		   ancestor.setHeight(Math.max(ancestor.getLeft().getHeight()+1, ancestor.right.getHeight()));
-		   
-		   
+		   ancestor.setHeight(Math.max(ancestor.getLeft().getHeight()+1, ancestor.right.getHeight()));   
 	   }
 	   if(prev_height!=ancestor.height) { // if ancestor changed his height
 		   cnt++;
 	   }
 	   ancestor.BF=ancestor.left.getHeight()-ancestor.right.getHeight();
-	   while(ancestor!=this.root ) { 
-		 
+	   while(ancestor!=this.root ) {  
 		ancestor=ancestor.getParent();
 		prev_height=ancestor.getHeight();
 		ancestor.setHeight(Math.max(ancestor.left.getHeight(),ancestor.right.getHeight())+1);
@@ -309,7 +274,6 @@ public class AVLTree {
 			   cnt++;
 		 }
 		ancestor.BF=ancestor.left.getHeight()-ancestor.right.getHeight();  
-		
 	   }
 	   AVLNode parent=Node.parent;
 	   if(parent.left.isRealNode()) {
@@ -317,21 +281,18 @@ public class AVLTree {
 	   }
 	   if(parent.right.isRealNode()){
 	   parent.right.BF=parent.right.left.height-parent.right.right.height;
-	   
 	   } 
-	   return cnt;
-	    
+	   return cnt;    
     }
     
+	
     //complexity O(1)
     //right rotation - receiving the first Node with BF=2,-2 after insertion when right rotation is needed
-   
     void right_rotation(AVLNode Node) {
     	AVLNode left_Node=Node.left; 
     	Node.setLeft(left_Node.right);
     	left_Node.right.setParent(Node);
     		
-    	
     	AVLNode Node_parent=Node.getParent(); 
     	Node.setParent(left_Node);
     	left_Node.setRight(Node);
@@ -341,32 +302,32 @@ public class AVLTree {
     		left_Node.setParent(null);
     	}
     	else {
-    	
-    		if(left_Node.getKey()<Node_parent.getKey()) { //if Node was his parent's left son
+    	        //if Node was his parent's left son
+    		if(left_Node.getKey()<Node_parent.getKey()) { 
     		Node_parent.setLeft(left_Node);
     	}
-    	else { //if Node was his parent's right son
-    	Node_parent.setRight(left_Node);	
-    	
+		
+        //if Node was his parent's right son
+    	else { 
+    		Node_parent.setRight(left_Node);	
     	}
     	left_Node.setParent(Node_parent);
-    	}
+        }
     
     	Node.height=Math.max(Node.right.height, Node.left.height)+1;
     	left_Node.height=Math.max(left_Node.left.height,Node.height)+1;
     	Node.BF=Node.left.height-Node.right.height;
     	update_xor_for_Node(Node);
-    	update_xor_for_Node(Node.parent);
-    	
-    	
+    	update_xor_for_Node(Node.parent);	
     }
-   // complexity O(1) 
-  //left rotation - receiving the first Node with BF=2,-2 after insertion when left rotation is needed
+	
+	
+    // complexity O(1) 
+    //left rotation - receiving the first Node with BF=2,-2 after insertion when left rotation is needed
     void left_rotation(AVLNode Node) {
     	AVLNode right_Node=Node.right; 
     	Node.setRight(right_Node.left);
-    	right_Node.left.setParent(Node);
-    		
+    	right_Node.left.setParent(Node);	
     	
     	AVLNode Node_parent=Node.getParent(); 
     	Node.setParent(right_Node);
@@ -377,13 +338,13 @@ public class AVLTree {
     		right_Node.setParent(null);
     	}
     	else {
-    	
-    		if(right_Node.getKey()<Node_parent.getKey()) { //if Node was his parent's left son
+    	        //if Node was his parent's left son
+    		if(right_Node.getKey()<Node_parent.getKey()) { 
     		Node_parent.setLeft(right_Node);
     	}
-    	else { //if Node was his parent's right son
+	//if Node was his parent's right son
+    	else { 
     	Node_parent.setRight(right_Node);	
-    	
     	}
     	right_Node.setParent(Node_parent);
     	}
@@ -394,12 +355,12 @@ public class AVLTree {
     	Node.BF=Node.left.height-Node.right.height;
     	
     	update_xor_for_Node(Node);
-    	update_xor_for_Node(Node.parent);
-    	
-    	
+    	update_xor_for_Node(Node.parent);	
     }
     
     	
+	
+	
     /**
      * public int delete(int k)
      * <p>
@@ -410,8 +371,7 @@ public class AVLTree {
      * time complexity: O(log(n))
      */
     public int delete(int k) {
-    	cnt_balance_delete=0;
-    	
+       cnt_balance_delete=0;
        if(search(k)==null) {
     	   return -1;
        }
@@ -427,62 +387,56 @@ public class AVLTree {
     	choose_delete(Node);
     	eliminate(Node);
     	size--;
-    	
-    	
-    	
-    	return cnt_balance_delete;
-    	
-       
-        
+    	return cnt_balance_delete;    
     }
     
+	
     // complexity O(logn)
     //update all heights and Balance Factors of ancestors of Node during deletion of Node 
     void update_heights_and_BF_2(AVLNode Node){ 
-    	
-    if(Node!=root) {
-    	int prev_height_parent=Node.parent.height;
-    	
-    	if(Node.key<Node.parent.key) { //Node is his parent's left son
-    		if(Node.left.isRealNode()) {
-    			Node.parent.height=Math.max(Node.left.height, Node.parent.right.height)+1;
-    			
+    	if(Node!=root) {
+    		int prev_height_parent=Node.parent.height;
+		
+    		//Node is his parent's left son
+    		if(Node.key<Node.parent.key) { 
+    			if(Node.left.isRealNode()) {
+    				Node.parent.height=Math.max(Node.left.height, Node.parent.right.height)+1;	
+    			}
+    			else {
+    				Node.parent.height=Math.max(Node.right.height, Node.parent.right.height)+1;
+    			}
     		}
-    		else {
-    			Node.parent.height=Math.max(Node.right.height, Node.parent.right.height)+1;
+		
+		//Node is his parent's right son
+    		else { 
+    			if(Node.left.isRealNode()) {
+    				Node.parent.height=Math.max(Node.left.height, Node.parent.left.height)+1;
+    			}
+    			else {
+    				Node.parent.height=Math.max(Node.right.height, Node.parent.left.height)+1;
+    			}
     		}
-    	}
-    	else { //Node is his parent's right son
-    		if(Node.left.isRealNode()) {
-    			Node.parent.height=Math.max(Node.left.height, Node.parent.left.height)+1;
-    		}
-    		else {
-    			Node.parent.height=Math.max(Node.right.height, Node.parent.left.height)+1;
-    		}
-    	}
-    	if(prev_height_parent!=Node.parent.height) {
+    		if(prev_height_parent!=Node.parent.height) {
 			cnt_balance_delete++;
 		}
-    	
-    	Node.parent.BF=Node.parent.left.height-Node.parent.right.height;
-    	
-    	if(Node.parent!=root){
-    	AVLNode ancestor=Node.parent;
-    	while(ancestor!=root) {
-    		ancestor=ancestor.parent;
-    		int prev_height=ancestor.height;
-    		ancestor.height=Math.max(ancestor.right.height, ancestor.left.height)+1;
-    		if(prev_height!=ancestor.height) {
-    			cnt_balance_delete++;
-    		}
-    		ancestor.BF=ancestor.left.height-ancestor.right.height;
-    		
+    		Node.parent.BF=Node.parent.left.height-Node.parent.right.height;
+    		if(Node.parent!=root){
+    			AVLNode ancestor=Node.parent;
+    			while(ancestor!=root) {
+    			ancestor=ancestor.parent;
+    			int prev_height=ancestor.height;
+    			ancestor.height=Math.max(ancestor.right.height, ancestor.left.height)+1;
+    			if(prev_height!=ancestor.height) {
+    				cnt_balance_delete++;
+    			}
+    			ancestor.BF=ancestor.left.height-ancestor.right.height;
+    			}	
+    	    	}
     	}
-    	
-    }
-    }
     }
     
+	
+	
     // complexity O(logn)
     // choose which delete is needed by checking Node's number of sons
     void choose_delete(AVLNode Node) { 
@@ -492,60 +446,68 @@ public class AVLTree {
     	else if(Node.left.isRealNode() && Node.right.isRealNode()) {
     		size++; // two objects are being deleted, and we want the size to decrease only by one
     		delete_2(Node);
-    		
     	}
-    	
     	else {
-    		delete_1(Node);
-    		
+    		delete_1(Node);	
     	}
-	
     }
     
+	
     // complexity O(logn)
     // delete a Node with 0 sons
-    void delete_0(AVLNode Node) { 
-    	
-    	if(Node.parent.key<Node.key) { // if Node is his parent's right son
+    void delete_0(AVLNode Node) {
+	    
+   	// if Node is his parent's right son
+    	if(Node.parent.key<Node.key) { 
     		Node.parent.setRight(Node.right);
     	}
-    	else { // if Node is his parent's left son
+	    
+	// if Node is his parent's left son
+    	else { 
     		Node.parent.setLeft(Node.left);
     	}
     	update_heights_and_BF_2(Node);
     	rotations_after_delete(Node);
-    	
     }
     
+	
+	
     // complexity O(logn)
     //delete a Node with 1 sons
     void delete_1(AVLNode Node) { 
     	if(Node.key!=root.key) {
-    	if(Node.parent.key>Node.key) { // if Node is his parent's left son
-    		if(Node.left.isRealNode()) { //if Node has a left son 
-    			Node.parent.setLeft(Node.left);
+		// if Node is his parent's left son
+    		if(Node.parent.key>Node.key) { 
+			//if Node has a left son
+    			if(Node.left.isRealNode()) {  
+    				Node.parent.setLeft(Node.left);
+    			}
+			//if Node has a right son
+    			else { 
+    				Node.parent.setLeft(Node.right);
+    			}
     		}
-    		else { //if Node has a right son
-    			Node.parent.setLeft(Node.right);
-    			
+		
+		//if Node is his parent's right son
+    		else { 
+			//if Node has a left son
+    			if(Node.left.isRealNode()) {  
+    				Node.parent.setRight(Node.left);	
+    			}
+			//if Node has a right son
+    			else {
+    				Node.parent.setRight(Node.right);
+    			}
     		}
     	}
-    	else { //if Node is his parent's right son
-    		if(Node.left.isRealNode()) { //if Node has a left son 
-    			Node.parent.setRight(Node.left);
-    			
-    		}
-    		else {//if Node has a right son
-    			Node.parent.setRight(Node.right);
-    		}
-    	}
-    	}
-    		Node.left.setParent(Node.parent);
-    		Node.right.setParent(Node.parent);
-    		update_heights_and_BF_2(Node);
-    		rotations_after_delete(Node);		
+    	Node.left.setParent(Node.parent);
+    	Node.right.setParent(Node.parent);
+    	update_heights_and_BF_2(Node);
+    	rotations_after_delete(Node);		
     }
-    	
+    
+	
+	
     // complexity O(logn)	
     // delete a Node with 2 sons
     void delete_2(AVLNode Node) { 
@@ -553,16 +515,22 @@ public class AVLTree {
     	AVLNode Node_succ=Node.successor;
     	Node.info=Node.successor.info;
     	delete(Node.successor.key);
-    	if(Node.key!=root.key) { // if Node is not the root;
-    	if(Node.key<Node.parent.key) {// if Node is his parent's left son
-    		Node.parent.setLeft(Node_succ);
+	    
+	// if Node is not the root
+    	if(Node.key!=root.key) { 
+		
+		// if Node is his parent's left son
+    		if(Node.key<Node.parent.key) {
+    			Node.parent.setLeft(Node_succ);
+    		}
+		// if Node is his parent's right son
+    		else { 
+    			Node.parent.setRight(Node_succ);
+    		}
     	}
-    	else { // if Node is his parent's right son
-    		Node.parent.setRight(Node_succ);
-    		
-    	}
-    	}
-    	else { //Node is the root
+	    
+	//Node is the root
+    	else { 
     		root=Node.successor;
     	}
     	Node_succ.height=Node.height;
@@ -575,49 +543,42 @@ public class AVLTree {
     	Node.successor.predecessor=Node_succ;
     	Node.predecessor.successor=Node.successor;
     	Node_succ.xor=Node.xor;
-   
     }
     
+	
     // complexity O(logn)
     // perform needed rotations from Node to the root and update heights, bf and xor accordingly
     void rotations_after_delete(AVLNode Node){ 
-    	
     	AVLNode ancestor=Node;
-    	
     	while(ancestor!=null) {
     		int prev_height=ancestor.height;
     		if(Math.abs(ancestor.BF)== 2) {
     			rotations(ancestor);
     		}
-    		
-    		
     		if(ancestor!=null) {
-    			
     			ancestor.height=Math.max(ancestor.left.height, ancestor.right.height)+1;
     			if(prev_height!=ancestor.height) {
     				cnt_balance_delete++;
     			}
-    			
     			ancestor.BF=ancestor.left.height-ancestor.right.height;
     			update_xor_for_Node(ancestor);
-    		
-    		if(ancestor.parent!=null) {
-    			int prev_height2=ancestor.parent.height;
-    			ancestor.parent.height=Math.max(ancestor.parent.left.height, ancestor.parent.right.height)+1;
-    			if(prev_height2!=ancestor.parent.height) {
-    				cnt_balance_delete++;
-    			}
-    			ancestor.parent.BF=ancestor.parent.left.height-ancestor.parent.right.height;
-    			update_xor_for_Node(ancestor.parent);
+    			if(ancestor.parent!=null) {
+    				int prev_height2=ancestor.parent.height;
+    				ancestor.parent.height=Math.max(ancestor.parent.left.height, ancestor.parent.right.height)+1;
+    				if(prev_height2!=ancestor.parent.height) {
+    					cnt_balance_delete++;
+    				}
+    				ancestor.parent.BF=ancestor.parent.left.height-ancestor.parent.right.height;
+    				update_xor_for_Node(ancestor.parent);
     			}
     		}
     		ancestor=ancestor.parent;
-    	}
-    	
-    
-    	
+    	}	
     }
     
+	
+	
+	
     // complexity O(1)
     // detach Node from the tree 
     void eliminate(AVLNode Node) { 
@@ -625,13 +586,8 @@ public class AVLTree {
     	Node.left=null;
     	Node.right=null;
     }
-    	
-    	
-    	
-    	
-    	
-    
-    
+
+	
     
     // complexity O(1)
     // update successor and predecessor during deletion
@@ -639,29 +595,18 @@ public class AVLTree {
     	if(min.key==Node.key) {
     		min=Node.successor;
     		Node.successor.predecessor=null;
-    	
     	}
     	else if(max.key==Node.key) {
     		max=Node.predecessor;
     		Node.predecessor.successor=null;
-   	
     	 }
     	else {
     		Node.successor.predecessor=Node.predecessor;
     		Node.predecessor.successor=Node.successor;
-    	}
-    	 
-    	 
-    	
+    	}	
     }
     
-    
-    
-    
-    
-    
-    	 
-    	 
+     	 
     	 
     	 
     	 
@@ -677,8 +622,10 @@ public class AVLTree {
     		return null;
     	}
         return min.getValue();
-        }
+    }
 
+	
+	
     /**
      * public Boolean max()
      * <p>
@@ -693,6 +640,8 @@ public class AVLTree {
         return max.getValue();
     }
 
+	
+	
     /**
      * public int[] keysToArray()
      * <p>
@@ -709,10 +658,10 @@ public class AVLTree {
         	i++;
         	Node=Node.successor;
         }
-        return arr;
-        
+        return arr;  
     }
     
+	
    
 
     /**
@@ -734,6 +683,10 @@ public class AVLTree {
          }
          return arr;
     }
+	
+	
+	
+	
     /**
      * public int size()
      * <p>
@@ -744,6 +697,9 @@ public class AVLTree {
         return size;
     }
 
+	
+	
+	
     /**
      * public int getRoot()
      * <p>
@@ -753,6 +709,9 @@ public class AVLTree {
     public AVLNode getRoot() {
         return this.root;
     }
+	
+	
+	
 
     /**
      * public boolean prefixXor(int k)
@@ -771,17 +730,16 @@ public class AVLTree {
     		if(Node.key<=k && xor_addition(Node)) {
     			cnt++;
     		}
-    	
     		Node=Node.parent;	
     	}
-    	
     	if(cnt%2==1) {
-    		return true;
-    		
+    		return true;	
     	}
-    	return false;
-        
+    	return false; 
     }
+	
+	
+	
     
   // complexity O(1) 
   //check Node's and Node's left subtree's xor
@@ -806,8 +764,10 @@ public class AVLTree {
     		return true;
     	}
     	return false;
-    	
     }
+	
+	
+	
     
   // complexity O(logn)
   //find a Node with key k
@@ -822,8 +782,10 @@ public class AVLTree {
     		}
     	}
     	return Node;
-    	
     }
+	
+	
+	
 
     /**
      * public AVLNode successor
@@ -837,6 +799,8 @@ public class AVLTree {
     public AVLNode successor(AVLNode node){
         return node.successor;
     }
+	
+	
 
     /**
      * public boolean succPrefixXor(int k)
@@ -855,19 +819,16 @@ public class AVLTree {
     		if(Node.getValue()==true) {
     			cnt++;
     		}
-    		Node=Node.successor;
-    		
+    		Node=Node.successor;	
     	}
     	if(cnt%2==0) {
     		return false;
-    	}
-    		
+    	}	
     	return true;
-    	
-    	
-    	
-    
     }
+	
+	
+	
 
 
     /**
@@ -893,33 +854,31 @@ public class AVLTree {
     	int BF;
     	Boolean xor;
     	
-    	
     	//AVLNode constructor, complexity=O(1)
     	public AVLNode(int key, Boolean info) {
     		this.key=key;
     		this.info=info;
-    		this.xor=this.info;
-    		
-    		
+    		this.xor=this.info;	
     	}
     	
     	//return a virtual AVLNode, complexity=O(1)
     	 public AVLNode VirtualAVLNode() {
     		AVLNode Node=new AVLNode(-1,null);
     		Node.setHeight(-1);
-    		return Node;
-    		
-    		
+    		return Node;	
     	}
 
+	    
+	    
         //returns node's key (for virtual node return -1), complexity=O(1)
     	 public int getKey() {
              if(!isRealNode()) {
              	return -1;
-             
              }
              return this.key;
          }
+	    
+	    
 
         //returns node's value [info] (for virtual node return null), complexity=O(1)
     	 public Boolean getValue() {
@@ -936,75 +895,81 @@ public class AVLTree {
             this.left=node;
         }
 
+	    
+	    
         //returns left child (if there is no left child return null), complexity=O(1)
         public AVLNode getLeft() {
-        	
             return this.left;
         }
+	    
+	    
 
         //sets right child, complexity=O(1)
         public void setRight(AVLNode node) {
         	 this.right=node;
         }
 
+	    
+	    
         //returns right child (if there is no right child return null), complexity=O(1)
         public AVLNode getRight() {
-        	
             return this.right;
         }
 
+	    
+	    
         //sets parent, complexity=O(1)
         public void setParent(AVLNode node) {
             this.parent=node;
         }
+	    
+	    
 
         //returns the parent (if there is no parent return null), complexity=O(1)
         public AVLNode getParent() {
             return this.parent;
-            }
+        }
         
+	    
 
         // Returns True if this is a non-virtual AVL node, complexity=O(1)
         public boolean isRealNode() {
             if(this.info==null) {
             	return false;
             }
-            return true;
-            	
-            
+            return true; 
         }
 
+	    
+	    
         // sets the height of the node, complexity=O(1)
         public void setHeight(int height) {
             this.height=height;
         }
         
+	    
+	    
         //check if Node is a leaf, complexity=O(1)
         Boolean is_leaf() {
         	if(this.isRealNode()) {
-        	
         		if(!this.right.isRealNode()&& (!this.left.isRealNode())) {
         			return true;
         		}
         	}
-        		return false;
-       
+        	return false;
         }
 
+	    
+	    
         // Returns the height of the node (-1 for virtual nodes), complexity=O(1)
         public int getHeight() {
             if(isRealNode()) {
             	return this.height;
             }
-            return -1;
-            	
-            
+            return -1;   
         }
-    }
-    
-     
-      
-      
+	    
+    }     
      
 }
 
