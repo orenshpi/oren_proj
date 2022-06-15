@@ -108,7 +108,9 @@ public class AVLTree {
     			Node_to_compare=Node_to_compare.right;	
     		}
     	}
-    	Node.setParent(Node_to_compare); //inserting Node as a leaf
+	
+	//inserting Node as a leaf
+    	Node.setParent(Node_to_compare); 
     	if(Node.parent.key>Node.key) {
     		Node.parent.setLeft(Node);	
     		}
@@ -124,7 +126,9 @@ public class AVLTree {
         
         AVLNode aid_node= Node;
         int cnt=1;
-        while(aid_node!=null  && Math.abs(aid_node.BF)<2) { //getting to the first node with BF 2,-2 
+	    
+	//getting to the first node with BF 2,-2 
+        while(aid_node!=null  && Math.abs(aid_node.BF)<2) { 
         	cnt++;
         	aid_node=aid_node.getParent();
         }
@@ -225,19 +229,16 @@ public class AVLTree {
 		   if(Node.right.BF==-1 || Node.right.BF==0) {
 			   left_rotation(Node);
 		   }
-		   else { //Node.right.BF==1
+		   else {  //Node.right.BF equal to 1
 			   right_rotation(Node.right);
 			   left_rotation(Node);   
 		   }
 	   }
-	   
-	   // Node.BF equal to 2
-	   else {  
+	   else {  // Node.BF equal to 2
 		if(Node.left.BF==1 || Node.left.BF==0) {
 			right_rotation(Node);
 		}
-		// Node.right.BF equal to -1
-		else {
+		else {  // Node.right.BF equal to -1
 			left_rotation(Node.left);
 			right_rotation(Node);
 		}
@@ -262,7 +263,9 @@ public class AVLTree {
 	   else{
 		   ancestor.setHeight(Math.max(ancestor.getLeft().getHeight()+1, ancestor.right.getHeight()));   
 	   }
-	   if(prev_height!=ancestor.height) { // if ancestor changed his height
+	   
+	   // if ancestor changed his height
+	   if(prev_height!=ancestor.height) { 
 		   cnt++;
 	   }
 	   ancestor.BF=ancestor.left.getHeight()-ancestor.right.getHeight();
@@ -270,7 +273,8 @@ public class AVLTree {
 		ancestor=ancestor.getParent();
 		prev_height=ancestor.getHeight();
 		ancestor.setHeight(Math.max(ancestor.left.getHeight(),ancestor.right.getHeight())+1);
-		 if(prev_height!=ancestor.height) { // if ancestor changed his height
+		 // if ancestor changed his height
+		 if(prev_height!=ancestor.height) {
 			   cnt++;
 		 }
 		ancestor.BF=ancestor.left.getHeight()-ancestor.right.getHeight();  
@@ -305,13 +309,11 @@ public class AVLTree {
     	        //if Node was his parent's left son
     		if(left_Node.getKey()<Node_parent.getKey()) { 
     		Node_parent.setLeft(left_Node);
-    	}
-		
-        //if Node was his parent's right son
-    	else { 
-    		Node_parent.setRight(left_Node);	
-    	}
-    	left_Node.setParent(Node_parent);
+    		}
+		else {  //if Node was his parent's right son
+    			Node_parent.setRight(left_Node);	
+    		}
+    		left_Node.setParent(Node_parent);
         }
     
     	Node.height=Math.max(Node.right.height, Node.left.height)+1;
@@ -341,12 +343,11 @@ public class AVLTree {
     	        //if Node was his parent's left son
     		if(right_Node.getKey()<Node_parent.getKey()) { 
     		Node_parent.setLeft(right_Node);
-    	}
-	//if Node was his parent's right son
-    	else { 
-    	Node_parent.setRight(right_Node);	
-    	}
-    	right_Node.setParent(Node_parent);
+    		}
+		else { //if Node was his parent's right son
+    		Node_parent.setRight(right_Node);	
+    		}
+    		right_Node.setParent(Node_parent);
     	}
     	
     
@@ -406,9 +407,7 @@ public class AVLTree {
     				Node.parent.height=Math.max(Node.right.height, Node.parent.right.height)+1;
     			}
     		}
-		
-		//Node is his parent's right son
-    		else { 
+    		else {  //Node is his parent's right son
     			if(Node.left.isRealNode()) {
     				Node.parent.height=Math.max(Node.left.height, Node.parent.left.height)+1;
     			}
@@ -444,7 +443,8 @@ public class AVLTree {
     		delete_0(Node);
     	}
     	else if(Node.left.isRealNode() && Node.right.isRealNode()) {
-    		size++; // two objects are being deleted, and we want the size to decrease only by one
+		// two objects are being deleted, and we want the size to decrease only by one
+    		size++; 
     		delete_2(Node);
     	}
     	else {
@@ -456,14 +456,11 @@ public class AVLTree {
     // complexity O(logn)
     // delete a Node with 0 sons
     void delete_0(AVLNode Node) {
-	    
    	// if Node is his parent's right son
     	if(Node.parent.key<Node.key) { 
     		Node.parent.setRight(Node.right);
     	}
-	    
-	// if Node is his parent's left son
-    	else { 
+    	else {  // if Node is his parent's left son
     		Node.parent.setLeft(Node.left);
     	}
     	update_heights_and_BF_2(Node);
@@ -482,20 +479,16 @@ public class AVLTree {
     			if(Node.left.isRealNode()) {  
     				Node.parent.setLeft(Node.left);
     			}
-			//if Node has a right son
-    			else { 
+    			else {  //if Node has a right son
     				Node.parent.setLeft(Node.right);
     			}
     		}
-		
-		//if Node is his parent's right son
-    		else { 
-			//if Node has a left son
-    			if(Node.left.isRealNode()) {  
+    		else {   //if Node is his parent's right son
+			
+    			if(Node.left.isRealNode()) {  //if Node has a left son
     				Node.parent.setRight(Node.left);	
     			}
-			//if Node has a right son
-    			else {
+    			else {  //if Node has a right son
     				Node.parent.setRight(Node.right);
     			}
     		}
@@ -523,14 +516,11 @@ public class AVLTree {
     		if(Node.key<Node.parent.key) {
     			Node.parent.setLeft(Node_succ);
     		}
-		// if Node is his parent's right son
-    		else { 
+    		else {  // if Node is his parent's right son
     			Node.parent.setRight(Node_succ);
     		}
     	}
-	    
-	//Node is the root
-    	else { 
+    	else {  //Node is the root
     		root=Node.successor;
     	}
     	Node_succ.height=Node.height;
